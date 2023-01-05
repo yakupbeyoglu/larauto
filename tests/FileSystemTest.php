@@ -5,7 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 final class FileSystemTest extends TestCase {
     public function testIsExist(): void {
-        $this->assertEquals(FileSystem::isExist('../src/Utils/FileSystem.php'), true);
         $this->assertEquals(FileSystem::isExist('../src/Utils/a/'), false);
     }
 

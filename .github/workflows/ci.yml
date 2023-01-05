@@ -1,0 +1,51 @@
+on:
+  push:
+    branches-ignore:
+    - "hotfix.*"
+    - "wip.*"
+
+name: Larauto tests
+
+jobs:
+  test_runner:
+    name: CI
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+        
+      # Docs: https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          ini-values: post_max_size=256M, max_execution_time=3000
+      
+      - name: Show mysql version
+        run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SELECT @@VERSION"
+
+      - name: Create test database
+        run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "CREATE DATABASE larauto_unit_test"
+      
+      - name: Show databases
+        run: mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -ppassword -e "SHOW DATABASES"
+
+      - name: Composer install all dependencies
+        working-directory: .
+        run: |
+          composer install --no-scripts
+
+      - name: Run tests
+        working-directory: .
+        run: vendor/bin/phpunit --testsuite Unit

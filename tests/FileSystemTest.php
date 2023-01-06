@@ -9,10 +9,9 @@ final class FileSystemTest extends TestCase {
     }
 
     public function testCreateDirectory(): void {
-        $is_created = FileSystem::createDirectory('Hello/');
-        $this->assertEquals($is_created, true);
+        $this->assertEquals(FileSystem::createDirectory('Hello/'), true);
         $this->assertEquals(FileSystem::isExist('Hello/'), true);
-
+        $this->assertEquals(FileSystem::createDirectory('Hello/'), false);
     }
 
     public function testIsDirectory():void {
@@ -23,6 +22,7 @@ final class FileSystemTest extends TestCase {
     public function testDeleteDirectory(): void {
         $this->assertEquals(FileSystem::delete('Hello'), true);
         $this->assertEquals(FileSystem::isExist('Hello'), false);
+        $this->assertEquals(FileSystem::delete('Hello'), false);
     }
 
     public function testCreateFile(): void {
@@ -32,8 +32,9 @@ final class FileSystemTest extends TestCase {
     }
 
     public function testDeleteFile():void {
-        $is_deleted = FileSystem::delete('larauto.txt');
-        $this->assertEquals($is_deleted, true);
+        $this->assertEquals(FileSystem::delete('larauto.txt'), true);
         $this->assertEquals(FileSystem::isExist('./larauto.txt'), false);
+        $this->assertEquals(FileSystem::delete('larauto.txt'), false);
+
     }
 }

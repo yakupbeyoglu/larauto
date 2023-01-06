@@ -17,9 +17,8 @@ class FileSystem {
     }
 
     public static function delete(string $filepath): bool {
-        if (!self::isExist($filepath)) {
-            throw new ErrorException("Given file path " . $filepath . " not exist !");
-        }
+        if (!self::isExist($filepath))
+            return false;
 
         if (self::isDirectory($filepath)) {
             return rmdir($filepath);
@@ -31,12 +30,12 @@ class FileSystem {
 
     public static function createDirectory(string $directorypath, int $permission = 0777): bool {
         if (self::isExist($directorypath)) {
-            throw new ErrorException("Given directory path " . $directorypath . " is already exist !");
+            return false;
         }
 
         $info = pathinfo($directorypath);
         if (array_key_exists('extension', $info)) {
-            throw new ErrorException("Given path includes an extension. Its not a directory path !");
+            return false;
         }
 
         return mkdir($directorypath, $permission, true);
